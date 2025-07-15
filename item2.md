@@ -123,3 +123,11 @@ alias proxy_off="unset http_proxy; unset https_proxy; echo 'HTTP代理已关闭'
 ![image-20250714165413555](./assets/image-20250714165413555.png)
 
 ![image-20250714165438439](./assets/image-20250714165438439.png)
+
+### background
+
+https://wallhaven.cc/
+
+https://alphacoders.com/
+
+![image-20250715111319648](./assets/image-20250715111319648.png)
