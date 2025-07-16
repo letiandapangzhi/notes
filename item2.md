@@ -22,6 +22,7 @@ vim ~/.zimrc
 
 # 环境变量
 vim ~/.zshrc
+
 ```
 
 ## Config
@@ -101,7 +102,7 @@ export https_proxy="http://127.0.0.1:9910"
 
 # 常用别名
 alias proxy_on="export http_proxy=http://v2v2:147268359@192.168.1.33:10810; export https_proxy=http://v2v2:147268359@192.168.1.33:10810; echo 'HTTP代理已开启'"
-alias proxy_geph_on="export http_proxy=http://127.0.0.1:9910; export https_proxy=http://127.0.0.1:9910; echo 'HTTP代理已开启'"
+alias proxy_on="export http_proxy=http://127.0.0.1:9910; export https_proxy=http://127.0.0.1:9910; echo 'HTTP代理已开启'"
 alias proxy_off="unset http_proxy; unset https_proxy; echo 'HTTP代理已关闭'"
 ```
 
@@ -131,3 +132,11 @@ https://wallhaven.cc/
 https://alphacoders.com/
 
 ![image-20250715111319648](./assets/image-20250715111319648.png)
+
+### font
+
+```bash
+# 字体 https://github.com/ryanoasis/nerd-fonts
+brew install font-0xProto-nerd-font
+```
+
