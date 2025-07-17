@@ -180,20 +180,48 @@ spec:
 ### nginx-ingress.yaml
 
 ```yaml
+# nginx-ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nginx-ingress
+  namespace: default
+  annotations:
+    # Traefik 特定注解（可选）
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    #traefik.ingress.kubernetes.io/router.middlewares: kube-system-traefik-forward-auth@kubernetescrd  # 可选，用于认证
 spec:
+  ingressClassName: traefik  # 指定 Ingress Class（K3s 默认）
   rules:
-  - host: example.com
+  - host: nginx.example.com  # 替换为你的域名或测试 IP
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
           service:
-            name: nginx-service
+            name: nginx-demo  # 指向上面创建的 Service
             port:
               number: 80
+```
+
+
+
+## kompose
+
+https://kompose.io/user-guide/
+
+```yaml
+version: '3'
+services:
+  web:
+    image: nginx:1.23
+    ports:
+      - "8080:80" # "HOST:CONTAINER" 将宿主机的 8080 端口映射到容器的 80 端口 -> hostPort 占用节点的8080
+
+  web2:
+    image: nginx:1.23
+    ports:
+      - "80"
 ```
 
