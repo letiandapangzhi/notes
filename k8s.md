@@ -1,13 +1,36 @@
 ## Step
 
-### 安装
+### 安装卸载
 
 ```bash
 # 安装
 curl -sfL https://get.k3s.io | sh -
 curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | \
 INSTALL_K3S_MIRROR=cn sh -s - \
---system-default-registry "registry.cn-hangzhou.aliyuncs.com" --write-kubeconfig-mode 644 
+--system-default-registry "https://docker.1ms.run"
+
+# --disable traefik
+
+# 卸载
+sudo systemctl stop k3s
+sudo systemctl disable k3s
+
+/usr/local/bin/k3s-uninstall.sh
+
+sudo rm -f /usr/local/bin/k3s
+sudo rm -f /usr/local/bin/k3s-killall.sh
+sudo rm -f /usr/local/bin/k3s-uninstall.sh
+
+sudo rm -rf /var/lib/rancher/k3s
+sudo rm -rf /var/lib/kubelet
+sudo rm -rf /var/lib/cni
+sudo rm -rf /opt/cni
+
+sudo rm -rf /etc/rancher/k3s
+sudo rm -rf /etc/systemd/system/k3s*
+sudo rm -rf /etc/default/k3s
+
+sudo rm -rf /var/log/rancher
 ```
 
 ### K3s sudo 修正
@@ -140,7 +163,7 @@ spec:
       nodePort: 30080 # 节点端口 (可选，范围 30000-32767)
 ```
 
-- ClusterIP：**仅集群内部可访问**，通过集群内部 IP 暴露服务
+- ClusterIP：**仅集群内部可访问**，通过集群内部 IP 暴露服务，ip不会因为服务器重启变化，删除调整service才会可能改变
 - NodePort：**集群内外均可访问**，通过每个节点的 IP 和静态端口（NodePort）暴露服务
 
 ### nginx-tomcat-service.yaml
@@ -173,6 +196,8 @@ spec:
     app: tomcat         # 选择标签为 app=tomcat 的 Pod
 ```
 
+单服务器同一个端口，LoadBalancer 会拦截nginx请求
+
 
 
 ## Ingress
@@ -180,48 +205,20 @@ spec:
 ### nginx-ingress.yaml
 
 ```yaml
-# nginx-ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nginx-ingress
-  namespace: default
-  annotations:
-    # Traefik 特定注解（可选）
-    traefik.ingress.kubernetes.io/router.entrypoints: web
-    #traefik.ingress.kubernetes.io/router.middlewares: kube-system-traefik-forward-auth@kubernetescrd  # 可选，用于认证
 spec:
-  ingressClassName: traefik  # 指定 Ingress Class（K3s 默认）
   rules:
-  - host: nginx.example.com  # 替换为你的域名或测试 IP
+  - host: example.com
     http:
       paths:
       - path: /
-        pathType: Prefix
         backend:
           service:
-            name: nginx-demo  # 指向上面创建的 Service
+            name: nginx-service
             port:
               number: 80
-```
-
-
-
-## kompose
-
-https://kompose.io/user-guide/
-
-```yaml
-version: '3'
-services:
-  web:
-    image: nginx:1.23
-    ports:
-      - "8080:80" # "HOST:CONTAINER" 将宿主机的 8080 端口映射到容器的 80 端口 -> hostPort 占用节点的8080
-
-  web2:
-    image: nginx:1.23
-    ports:
-      - "80"
 ```
 
